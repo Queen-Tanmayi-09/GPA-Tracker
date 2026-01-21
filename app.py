@@ -96,3 +96,7 @@ if st.button("Calculate My Target Score"):
         st.success(f"🎉 You have already secured enough marks for a GPA {target_gpa}!")
     else:
         st.warning(f"🎯 To get a GPA {target_gpa}, you need to average **{needed:.1f}%** on the remaining {int(remaining_weight*100)}% of the course.")
+
+    
+    st.info("Thank you for using UQ_GPA_TRACKER")
+    st.info("Made with 💖 by Tanmayi Mendhe")

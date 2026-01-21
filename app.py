@@ -33,12 +33,16 @@ Courses_sem1 = {
 }
 
 # 2. LOGIC: Wahi fixed function jo humne banaya tha
-def calculate_needed(points_earned, desired_gpa, remaining_weight):
+def calculate_required_percentage(current_percentage, desired_gpa, remaining_weight):
     gpa_to_percentage = {7: 85, 6: 75, 5: 65, 4: 50}
     target_total = gpa_to_percentage[desired_gpa]
+
+    # Formula: (Target Total - Points already in the bag) / Weight of remaining exams
     gap = target_total - points_earned
+    
     if remaining_weight <= 0:
         return 0 if gap <= 0 else float('inf')
+        
     return gap / remaining_weight
 
 # --- STREAMLIT UI ---
@@ -74,20 +78,21 @@ for item, weight in course_data.items():
 
 # Step 3: Target GPA
 remaining_weight = 1.0 - weight_completed
+
 target_gpa = st.select_slider("Select your target GPA:", options=[4, 5, 6, 7], value=7)
 
 # Step 4: Final Results
 if st.button("Calculate My Target Score"):
-    needed = calculate_needed(points_earned, target_gpa, remaining_weight)
+    needed = calculate_required_percentage(points_earned, target_gpa, remaining_weight)
     
     st.divider()
     st.write(f"### Results for {course_code}")
-    st.metric("Points Secured So Far", f"{points_earned:.2f} / {int(weight_completed*100)}")
+    st.metric("Points Secured So Far", f"{points_earned:.1f} / {int(weight_completed*100)}")
     
     if needed > 100:
-        st.error(f"⚠️ Impossible to get a GPA {target_gpa}. You would need **{needed:.2f}%** on remaining work.")
+        st.error(f"⚠️ Impossible to get a GPA {target_gpa}. You would need **{needed:.1f}%** on remaining work.")
     elif needed <= 0:
         st.balloons()
         st.success(f"🎉 You have already secured enough marks for a GPA {target_gpa}!")
     else:
-        st.warning(f"🎯 To get a GPA {target_gpa}, you need to average **{needed:.2f}%** on the remaining {int(remaining_weight*100)}% of the course.")
+        st.warning(f"🎯 To get a GPA {target_gpa}, you need to average **{needed:.1f}%** on the remaining {int(remaining_weight*100)}% of the course.")

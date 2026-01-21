@@ -36,7 +36,7 @@ Courses_sem1= {
         "credits": 2,
         "Philosophy_assignment" : 0.15,
         "Python_and_communication_assignment" : 0.15,
-        "Practical_exercises" : 0.10,
+        "Practical_exercise" : 0.10,
         "Final_exam" : 0.60
         
     }
@@ -45,28 +45,31 @@ Courses_sem1= {
 #logic to calculate percentage required to get a 7 gpa
 def calculate_required_percentage(current_percentage, desired_gpa, remaining_weight):
     gpa_to_percentage = {7: 85, 6: 75, 5: 65, 4: 50}
-    target= gpa_to_percentage[desired_gpa]
+    target_total = gpa_to_percentage[desired_gpa]
     
-    if desired_gpa not in gpa_to_percentage:
-        raise ValueError("Desired GPA must be between 4 and 7.")
+    # NEW LOGIC: Just find the gap and divide by what's left
+    # Formula: (Target Total - Points already in the bag) / Weight of remaining exams
+    gap = target_total - points_earned
     
-    required_total_percentage = gpa_to_percentage[desired_gpa]
-    required_percentage = (required_total_percentage - current_percentage * (1 - remaining_weight)) / remaining_weight
-    
-    return required_percentage
+    if remaining_weight <= 0:
+        return 0 if gap <= 0 else float('inf')
+        
+    return gap / remaining_weight
 #Select_course
 
 print("Available Courses:", list(Courses_sem1.keys()))
 course_code = input("Enter course code: ").upper()
-course_data = Courses_sem1.get(course_code)
+#course_data = Courses_sem1.get(course_code)
 
-points_earned = 0
-weight_completed = 0
+if course_code in Courses_sem1:
+    course = Courses_sem1[course_code]
+    points_earned = 0  #optional
+    weight_completed = 0
 
 # 2. Loop through assessments in the dictionary
-for assessment, weight in course_data.items():
+for assessment, weight in course.items():
     # Skip metadata keys
-    if assessment in ["name", "credits"]:
+    if assessment in ["name", "credits"]:                        #might throw an error if these keys are not present.
         continue
     
     status = input(f"Have you finished {assessment} ({int(weight*100)}%)? (y/n): ").lower()
@@ -85,30 +88,24 @@ else:
     goal = int(input("Enter desired GPA (4-7): "))
     needed = calculate_required_percentage(points_earned, goal, remaining_weight)
     
-    print("-" * 30)
-    print(f"Course: {course_data['name']}")
+    print("-" * 40)
+    print(f"📊 SUMMARY FOR {course_code}")
     print(f"Points earned so far: {points_earned:.2f} / {int(weight_completed*100)}")
-    
+    print(f"Remaining course weight: {int(remaining_weight*100)}%")
     if needed > 100:
-        print(f"Warning: You need {needed:.2f}% to get a {goal}. That's impossible, aiming for a lower GPA might be realistic.")
+        print(f" ⚠️ Warning: You need {needed:.2f}% to get a {goal}. That's impossible, aiming for a lower GPA might be realistic.")
     elif needed <= 0:
-        print(f"Congrats! You've already secured a GPA {goal}!")
+        print(f" ✅ Congrats! You've already secured a GPA {goal}!")
     else:
-        print(f"To get a GPA {goal}, you need to score {needed:.2f}% on the remaining assessments.")
+        print(f" 🎯 To get a GPA {goal}, you need to score {needed:.2f}% on the remaining assessments.")
 
-
-current_percentage = float(input("Enter your current percentage: "))
-desired_gpa = int(input("Enter your desired GPA (4-7): "))
-remaining_weight = float(input("Enter the remaining weight of assessments (as a decimal): "))
-
-
-
+    print("-"*40)
+    print("Thank you for using UQ_GPA_TRACKER")
+    print("Made with 💖 by Tanmayi Mendhe")
 
 
 # ye remaining_weight tumhe calculate karna hoga based on tumhare course ke assessments ke %age weightage ke hisab se.
 # ye 1-Remaining_weight tumhare current_percentage ko multiply karega to find out ki tumne ab tak kitna score kiya h. This is basically tumne kitna percent kaam finish kiya hai and will calculate your score when multiplied by current_percentage.
-required_percentage = calculate_required_percentage(current_percentage, desired_gpa, remaining_weight)
-print(f"To achieve a GPA of {desired_gpa}, you need to score {required_percentage:.2f}% in the remaining assessments.")
 
 '''A Practical Example (CSSE1001)
 Let's say you've finished all assignments but the Final Exam (40%).remaining_weight = 0.4

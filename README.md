@@ -19,3 +19,7 @@ Built-in Safety Checks: Provides intelligent feedback based on mathematical feas
 Python: The core engine of the application.
 
 Streamlit: Powering the interactive web experience.
+
+## 📺 Video Demo
+Check out the full walkthrough of the GPA Strategist here: 
+[![Watch the video](https://youtu.be/CbjJ9kJ1b0Q?si=BEUb7eEHQr2bUSab)]
